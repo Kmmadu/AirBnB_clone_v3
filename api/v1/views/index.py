@@ -1,21 +1,43 @@
 #!/usr/bin/python3
 """
-Blueprint for AirBnB API routes
+API endpoints for status and stats
 """
 
-from flask import Blueprint
+from flask import jsonify
+from api.v1.views import app_views
+from models import storage
 
-# Create a blueprint for version 1 of the API with the URL prefix "/api/v1"
-app_views = Blueprint('app_views', __name__, url_prefix="/api/v1")
+# Status endpoint
+@app_views.route("/status", methods=["GET"], strict_slashes=False)
+def status():
+    """
+    Returns the status of the API
+    """
+    # Create a response with status "OK"
+    data = {
+        "status": "OK"
+    }
+    
+    # Return the JSON response with a 200 status code
+    return jsonify(data), 200
 
-# Importing individual route modules to ensure they are registered with the blueprint
-# Explicit imports help maintain readability and code clarity
-from api.v1.views.index import *  # Status endpoint
-from api.v1.views.states import *  # State-related endpoints
-from api.v1.views.amenities import *  # Amenity-related endpoints
-from api.v1.views.cities import *  # City-related endpoints
-from api.v1.views.places import *  # Place-related endpoints
-from api.v1.views.places_reviews import *  # Place review-related endpoints
-from api.v1.views.users import *  # User-related endpoints
-from api.v1.views.places_amenities import *  # Place amenity-related endpoints
+
+# Stats endpoint
+@app_views.route("/stats", methods=["GET"], strict_slashes=False)
+def stats():
+    """
+    Returns the count of various objects in the system
+    """
+    # Create a dictionary with the count of each object type
+    data = {
+        "amenities": storage.count("Amenity"),
+        "cities": storage.count("City"),
+        "places": storage.count("Place"),
+        "reviews": storage.count("Review"),
+        "states": storage.count("State"),
+        "users": storage.count("User"),
+    }
+
+    # Return the JSON response with a 200 status code
+    return jsonify(data), 200
 
