@@ -1,43 +1,29 @@
 #!/usr/bin/python3
-"""
-API endpoints for status and stats
-"""
-
-from flask import jsonify
+""" returning the  json statuses"""
 from api.v1.views import app_views
+from flask import jsonify
 from models import storage
 
-# Status endpoint
-@app_views.route("/status", methods=["GET"], strict_slashes=False)
-def status():
-    """
-    Returns the status of the API
-    """
-    # Create a response with status "OK"
-    data = {
-        "status": "OK"
+
+@app_views.route('/status', strict_slashes=False)
+def stat_return():
+    """ return json status: OK """
+    return jsonify({"status": "OK"})
+
+
+@app_views.route('/stats', methods=['GET'], strict_slashes=False)
+def stat_count():
+    """ endpoint that retrieves the # of each objects by type """
+    count_stats = {
+        'amenities': storage.count('Amenity'),
+        'cities': storage.count('City'),
+        'places': storage.count('Place'),
+        'reviews': storage.count('Review'),
+        'states': storage.count('State'),
+        'users': storage.count('User')
     }
-    
-    # Return the JSON response with a 200 status code
-    return jsonify(data), 200
+    return jsonify(count_stats)
 
 
-# Stats endpoint
-@app_views.route("/stats", methods=["GET"], strict_slashes=False)
-def stats():
-    """
-    Returns the count of various objects in the system
-    """
-    # Create a dictionary with the count of each object type
-    data = {
-        "amenities": storage.count("Amenity"),
-        "cities": storage.count("City"),
-        "places": storage.count("Place"),
-        "reviews": storage.count("Review"),
-        "states": storage.count("State"),
-        "users": storage.count("User"),
-    }
-
-    # Return the JSON response with a 200 status code
-    return jsonify(data), 200
-
+if __name__ == "__main__":
+    pass
